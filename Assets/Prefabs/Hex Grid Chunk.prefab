@@ -106,6 +106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2461310380194281655}
   - component: {fileID: 8625728026702132176}
+  - component: {fileID: 5725970923248751081}
   m_Layer: 0
   m_Name: Hex Grid Chunk
   m_TagString: Untagged
@@ -152,6 +153,49 @@ MonoBehaviour:
   water: {fileID: 6200973420707850061}
   waterShore: {fileID: 6871139549765697078}
   estuaries: {fileID: 2955167099594200127}
+  features: {fileID: 5725970923248751081}
+--- !u!114 &5725970923248751081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017414210527632723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7402e73578f45a44b74c84e42997a8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  urbanCollections:
+  - prefabs:
+    - {fileID: 4027234733861543794, guid: c838ed25c2fa2f146a549d481aad109a, type: 3}
+    - {fileID: 2463471293646291489, guid: 4f0ec13b0184a524894511e49d579586, type: 3}
+  - prefabs:
+    - {fileID: 3881377399268256214, guid: 306a3ee697062984a8cc54ec5152ab27, type: 3}
+    - {fileID: 8460094592017964482, guid: 3c4f3e84cd911a1459e609c048bf85f0, type: 3}
+  - prefabs:
+    - {fileID: 4403751424333816927, guid: 29567b6f67db0cc45b91bd2f54729b3f, type: 3}
+    - {fileID: 179856128414010099, guid: 8470941024a534647a9e07f9d73264d3, type: 3}
+  farmCollections:
+  - prefabs:
+    - {fileID: 4820947744779928236, guid: f9445c5d76d90e54c9e4c86dbc6e9fa9, type: 3}
+    - {fileID: 4769908133714510801, guid: 689e1db53d05b4d4a93e5f1ee46a6185, type: 3}
+  - prefabs:
+    - {fileID: 8623416009142070391, guid: f2e7bec6566820647bc6faa93c8e3076, type: 3}
+    - {fileID: 8781491428129302492, guid: 4da82584640bdd0488d2474778401909, type: 3}
+  - prefabs:
+    - {fileID: 4015575043411225259, guid: 0f3abd0b14d1c0246b6ce9a5a4461733, type: 3}
+    - {fileID: 5183580259548000634, guid: 7a1ce68deda0f894bbf0eaa57a30fed4, type: 3}
+  plantCollections:
+  - prefabs:
+    - {fileID: 3506233102120624357, guid: 0804b30b65952844f93185ed4d9e8ebe, type: 3}
+    - {fileID: 5106196056075683572, guid: 67d474cdd5279cd49945c831c486fcbc, type: 3}
+  - prefabs:
+    - {fileID: 4526721727682206507, guid: 7139d495369cea54aa7cde4aa3323a09, type: 3}
+    - {fileID: 1074300581183818571, guid: bbe5ed7aa75643d4f8bd2c913ced04dd, type: 3}
+  - prefabs:
+    - {fileID: 7028625426893448805, guid: 1bfbf93bc9cb2a7418077746cfb2b14a, type: 3}
+    - {fileID: 4627716730628246157, guid: 587c901fa8cb4b84caa327746eb46076, type: 3}
 --- !u!1 &1213974439702021758
 GameObject:
   m_ObjectHideFlags: 0

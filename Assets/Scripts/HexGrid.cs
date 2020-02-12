@@ -16,15 +16,18 @@ public class HexGrid : MonoBehaviour
 
     public HexGridChunk chunkPrefab;
 
+    public int seed;
 
     private HexCell[] _cells;
     private HexGridChunk[] _chunks;
 
     private int _cellCountX, _cellCountZ;
 
+
     private void Awake()
     {
         HexMetrics.NoiseSource = noiseSource;
+        HexMetrics.InitializeHashGrid(seed);
 
         _cellCountX = chunkCountX * HexMetrics.ChunkSizeX;
         _cellCountZ = chunkCountZ * HexMetrics.ChunkSizeZ;
@@ -35,7 +38,11 @@ public class HexGrid : MonoBehaviour
 
     private void OnEnable()
     {
-        HexMetrics.NoiseSource = noiseSource;
+        if (!HexMetrics.NoiseSource)
+        {
+            HexMetrics.NoiseSource = noiseSource;
+            HexMetrics.InitializeHashGrid(seed);
+        }
     }
 
     public HexCell GetCell(Vector3 position)

@@ -17,6 +17,8 @@ public class HexCell : MonoBehaviour
     private int _elevation = int.MinValue;
     private Color _color;
     private int _waterLevel;
+    private int _urbanLevel, _farmLevel, _plantLevel;
+
 
     private bool _hasIncomingRiver, _hasOutgoingRiver;
     private HexDirection _incomingRiver, _outgoingRiver;
@@ -77,6 +79,44 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    public int UrbanLevel
+    {
+        get => _urbanLevel;
+        set
+        {
+            if (_urbanLevel != value)
+            {
+                _urbanLevel = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
+
+    public int FarmLevel
+    {
+        get => _farmLevel;
+        set
+        {
+            if (_farmLevel != value)
+            {
+                _farmLevel = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
+
+    public int PlantLevel
+    {
+        get => _plantLevel;
+        set
+        {
+            if (_plantLevel != value)
+            {
+                _plantLevel = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
 
     public Color Color
     {

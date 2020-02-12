@@ -42,6 +42,18 @@ public static class HexMetrics {
 
     public const float WaterBlendFactor = 1f - WaterFactor;
 
+    public const int HashGridSize = 256;
+
+    public const float HashGridScale = 0.25f;
+
+    private static HexHash[] HashGrid;
+
+	private static float[][] FeatureThresholds = {
+        new float[] {0.0f, 0.0f, 0.4f},
+        new float[] {0.0f, 0.4f, 0.6f},
+        new float[] {0.4f, 0.6f, 0.8f}
+    };
+
 	private static readonly Vector3[] Corners = {
 		new Vector3(0f, 0f, OuterRadius),
 		new Vector3(InnerRadius, 0f, 0.5f * OuterRadius),
@@ -146,5 +158,37 @@ public static class HexMetrics {
     {
         return (Corners[(int)direction] + Corners[(int)direction + 1]) *
                WaterBlendFactor;
+    }
+
+    public static void InitializeHashGrid(int seed)
+    {
+        HashGrid = new HexHash[HashGridSize * HashGridSize];
+        Random.State currentState = Random.state;
+		Random.InitState(seed);
+		for (int i = 0; i < HashGrid.Length; i++)
+        {
+            HashGrid[i] = HexHash.Create();
+		}
+        Random.state = currentState;
+	}
+
+    public static HexHash SampleHashGrid(Vector3 position)
+    {
+        int x = (int)(position.x * HashGridScale) % HashGridSize;
+        if (x < 0)
+        {
+            x += HashGridSize;
+        }
+        int z = (int)(position.z * HashGridScale) % HashGridSize;
+        if (z < 0)
+        {
+            z += HashGridSize;
+        }
+		return HashGrid[x + z * HashGridSize];
+    }
+
+    public static float[] GetFeatureThresholds(int level)
+    {
+        return FeatureThresholds[level];
     }
 }
