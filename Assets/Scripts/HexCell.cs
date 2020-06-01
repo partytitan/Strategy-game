@@ -132,6 +132,21 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    public bool Walled
+    {
+        get => walled;
+        set
+        {
+            if (walled != value)
+            {
+                walled = value;
+                Refresh();
+            }
+        }
+    }
+
+    bool walled;
+
     public float RiverSurfaceY => (_elevation + HexMetrics.WaterElevationOffset) * HexMetrics.ElevationStep;
     public float WaterSurfaceY => (_waterLevel + HexMetrics.WaterElevationOffset) * HexMetrics.ElevationStep;
 
