@@ -2,6 +2,8 @@
 
 public static class HexMetrics {
 
+    public static Color[] Colors;
+
 	public const float OuterToInner = 0.866025404f;
 
 	public const float InnerToOuter = 1f / OuterToInner;
@@ -46,11 +48,17 @@ public static class HexMetrics {
 
     public const float HashGridScale = 0.25f;
 
-    public const float WallHeight = 3f;
+	public const float WallHeight = 4f;
 
-    public const float WallThickness = 0.75f;
+    public const float WallYOffset = -1f;
+
+	public const float WallThickness = 0.75f;
 
     public const float WallElevationOffset = VerticalTerraceStepSize;
+
+    public const float WallTowerThreshold = 0.5f;
+
+    public const float BridgeDesignLength = 7f;
 
 	private static HexHash[] HashGrid;
 
@@ -212,7 +220,7 @@ public static class HexMetrics {
         near.z += (far.z - near.z) * 0.5f;
         float v =
             near.y < far.y ? WallElevationOffset : (1f - WallElevationOffset);
-        near.y += (far.y - near.y) * v;
+        near.y += (far.y - near.y) * v + WallYOffset;
         return near;
     }
 }

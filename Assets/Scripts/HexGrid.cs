@@ -1,13 +1,13 @@
 ﻿using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HexGrid : MonoBehaviour
 {
-    public int chunkCountX = 4, chunkCountZ = 3;
+    public int cellCountX = 20, cellCountZ = 15;
 
 
-    public Color defaultColor = Color.white;
 
     public HexCell cellPrefab;
     public Text cellLabelPrefab;
@@ -21,20 +21,20 @@ public class HexGrid : MonoBehaviour
     private HexCell[] _cells;
     private HexGridChunk[] _chunks;
 
-    private int _cellCountX, _cellCountZ;
+    private int _chunkCountX, _chunkCountZ;
+
+    public Color[] colors;
+
 
 
     private void Awake()
     {
         HexMetrics.NoiseSource = noiseSource;
         HexMetrics.InitializeHashGrid(seed);
-
-        _cellCountX = chunkCountX * HexMetrics.ChunkSizeX;
-        _cellCountZ = chunkCountZ * HexMetrics.ChunkSizeZ;
-
-        CreateChunks();
-        CreateCells();
+        HexMetrics.Colors = colors;
+        CreateMap(cellCountX, cellCountZ);
     }
+
 
     private void OnEnable()
     {
@@ -49,23 +49,23 @@ public class HexGrid : MonoBehaviour
     {
         position = transform.InverseTransformPoint(position);
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-        int index = coordinates.X + coordinates.Z * _cellCountX + coordinates.Z / 2;
+        int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
         return _cells[index];
     }
 
     public HexCell GetCell(HexCoordinates coordinates)
     {
         int z = coordinates.Z;
-        if (z < 0 || z >= _cellCountZ)
+        if (z < 0 || z >= cellCountZ)
         {
             return null;
         }
         int x = coordinates.X + z / 2;
-        if (x < 0 || x >= _cellCountX)
+        if (x < 0 || x >= cellCountX)
         {
             return null;
         }
-        return _cells[x + z * _cellCountX];
+        return _cells[x + z * cellCountX];
     }
 
     public void ShowUI(bool visible)
@@ -76,13 +76,43 @@ public class HexGrid : MonoBehaviour
         }
     }
 
+    public bool CreateMap(int x, int z)
+    {
+        if (
+            x <= 0 || x % HexMetrics.ChunkSizeX != 0 ||
+            z <= 0 || z % HexMetrics.ChunkSizeZ != 0
+        )
+        {
+            Debug.LogError("Unsupported map size.");
+            return false;
+        }
+
+        if (_chunks != null)
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+            {
+                Destroy(_chunks[i].gameObject);
+            }
+        }
+
+        cellCountX = x;
+        cellCountZ = z;
+        _chunkCountX = cellCountX / HexMetrics.ChunkSizeX;
+        _chunkCountZ = cellCountZ / HexMetrics.ChunkSizeZ;
+
+        CreateChunks();
+        CreateCells();
+
+        return true;
+    }
+
     private void CreateChunks()
     {
-        _chunks = new HexGridChunk[chunkCountX * chunkCountZ];
+        _chunks = new HexGridChunk[_chunkCountX * _chunkCountZ];
 
-        for (int z = 0, i = 0; z < chunkCountZ; z++)
+        for (int z = 0, i = 0; z < _chunkCountZ; z++)
         {
-            for (int x = 0; x < chunkCountX; x++)
+            for (int x = 0; x < _chunkCountX; x++)
             {
                 HexGridChunk chunk = _chunks[i++] = Instantiate(chunkPrefab);
                 chunk.transform.SetParent(transform);
@@ -92,11 +122,11 @@ public class HexGrid : MonoBehaviour
 
     private void CreateCells()
     {
-        _cells = new HexCell[_cellCountZ * _cellCountX];
+        _cells = new HexCell[cellCountZ * cellCountX];
 
-        for (int z = 0, i = 0; z < _cellCountZ; z++)
+        for (int z = 0, i = 0; z < cellCountZ; z++)
         {
-            for (int x = 0; x < _cellCountX; x++)
+            for (int x = 0; x < cellCountX; x++)
             {
                 CreateCell(x, z, i++);
             }
@@ -116,7 +146,6 @@ public class HexGrid : MonoBehaviour
         var cellTransform = cell.transform;
         cellTransform.localPosition = position;
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
-        cell.Color = defaultColor;
 
         // Set cell neigbors
         if (x > 0)
@@ -130,21 +159,21 @@ public class HexGrid : MonoBehaviour
             // All even rows have NW to SE connections
             if ((z & 1) == 0)
             {
-                cell.SetNeighbor(HexDirection.SE, _cells[i - _cellCountX]);
+                cell.SetNeighbor(HexDirection.SE, _cells[i - cellCountX]);
                 // Connect to SW neigbor if not first in row
                 if (x > 0)
                 {
-                    cell.SetNeighbor(HexDirection.SW, _cells[i - _cellCountX - 1]);
+                    cell.SetNeighbor(HexDirection.SW, _cells[i - cellCountX - 1]);
                 }
             }
             // All uneven rows have NW to SW connections
             else
             {
-                cell.SetNeighbor(HexDirection.SW, _cells[i - _cellCountX]);
+                cell.SetNeighbor(HexDirection.SW, _cells[i - cellCountX]);
                 // Connect to SE neigbor if not last in row
-                if (x < _cellCountX - 1)
+                if (x < cellCountX - 1)
                 {
-                    cell.SetNeighbor(HexDirection.SE, _cells[i - _cellCountX + 1]);
+                    cell.SetNeighbor(HexDirection.SE, _cells[i - cellCountX + 1]);
                 }
             }
         }
@@ -164,10 +193,49 @@ public class HexGrid : MonoBehaviour
     {
         int chunkX = x / HexMetrics.ChunkSizeX;
         int chunkZ = z / HexMetrics.ChunkSizeZ;
-        HexGridChunk chunk = _chunks[chunkX + chunkZ * chunkCountX];
+        HexGridChunk chunk = _chunks[chunkX + chunkZ * _chunkCountX];
 
         int localX = x - chunkX * HexMetrics.ChunkSizeX;
         int localZ = z - chunkZ * HexMetrics.ChunkSizeZ;
         chunk.AddCell(localX + localZ * HexMetrics.ChunkSizeX, cell);
+    }
+
+    public void Save(BinaryWriter writer)
+    {
+        writer.Write(cellCountX);
+        writer.Write(cellCountZ);
+
+        foreach (var cell in _cells)
+        {
+            cell.Save(writer);
+        }
+    }
+
+    public void Load(BinaryReader reader, int header)
+    {
+        int x = 20, z = 15;
+        if (header >= 1)
+        {
+            x = reader.ReadInt32();
+            z = reader.ReadInt32();
+        }
+
+        if (x != cellCountX || z != cellCountZ)
+        {
+            if (!CreateMap(x, z))
+            {
+                return;
+            }
+        }
+
+        foreach (var cell in _cells)
+        {
+            cell.Load(reader);
+        }
+
+        foreach (var chunk in _chunks)
+        {
+            chunk.Refresh();
+        }
     }
 }

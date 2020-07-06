@@ -1,22 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour
 {
-    public Color[] colors;
-
     public HexGrid hexGrid;
 
-    private Color _activeColor;
     private int _activeElevation;
     private int _activeWaterLevel;
-    private int _activeUrbanLevel, _activeFarmLevel, _activePlantLevel;
-    private bool _applyColor;
+    private int _activeTerrainTypeIndex;
+    private int _activeUrbanLevel, _activeFarmLevel, _activePlantLevel, activeSpecialIndex;
     private bool _applyElevation = true;
     private bool _applyWaterLevel = true;
-    private bool _applyUrbanLevel, _applyFarmLevel, _applyPlantLevel;
+    private bool _applyUrbanLevel, _applyFarmLevel, _applyPlantLevel, _applySpecialIndex;
     private int _brushSize;
 
     private bool _isDrag;
@@ -29,10 +27,6 @@ public class HexMapEditor : MonoBehaviour
     }
 
     private OptionalToggle _riverMode, _roadMode, _walledMode;
-    private void Awake()
-    {
-        SelectColor(-1);
-    }
 
     private void Update()
     {
@@ -113,11 +107,10 @@ public class HexMapEditor : MonoBehaviour
     {
         if (cell)
         {
-            if (_applyColor)
+            if (_activeTerrainTypeIndex >= 0)
             {
-                cell.Color = _activeColor;
+                cell.TerrainTypeIndex = _activeTerrainTypeIndex;
             }
-
             if (_applyElevation)
             {
                 cell.Elevation = _activeElevation;
@@ -126,6 +119,11 @@ public class HexMapEditor : MonoBehaviour
             if (_applyWaterLevel)
             {
                 cell.WaterLevel = _activeWaterLevel;
+            }
+
+            if (_applySpecialIndex)
+            {
+                cell.SpecialIndex = activeSpecialIndex;
             }
 
             if (_applyUrbanLevel)
@@ -174,15 +172,10 @@ public class HexMapEditor : MonoBehaviour
             }
         }
     }
-    public void SelectColor(int index)
+    public void SetTerrainTypeIndex(int index)
     {
-        _applyColor = index >= 0;
-        if (_applyColor)
-        {
-            _activeColor = colors[index];
-        }
+        _activeTerrainTypeIndex = index;
     }
-
     public void SetApplyElevation(bool toggle)
     {
         _applyElevation = toggle;
@@ -201,6 +194,16 @@ public class HexMapEditor : MonoBehaviour
     public void SetWaterLevel(float level)
     {
         _activeWaterLevel = (int)level;
+    }
+
+    public void SetApplySpecialIndex(bool toggle)
+    {
+        _applySpecialIndex = toggle;
+    }
+
+    public void SetSpecialIndex(float index)
+    {
+        activeSpecialIndex = (int)index;
     }
 
     public void SetBrushSize(float size)
@@ -257,5 +260,4 @@ public class HexMapEditor : MonoBehaviour
     {
         _activePlantLevel = (int)level;
     }
-
 }
